@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 import { brand } from '../lib/brand';
 
+const EARLY_ACCESS_FORM_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLSdYXXnauIpId-nfG2b-9p_BxyTdW5-QIemjr2iAD8VbrjtX7g/viewform?usp=dialog';
+
 function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 shadow-sm">
@@ -66,12 +69,17 @@ export default function Landing() {
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/onboarding"
+              {/* JOIN EARLY ACCESS -> Google Form */}
+              <a
+                href={EARLY_ACCESS_FORM_URL}
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
               >
                 Join Early Access <ArrowRight className="h-4 w-4" />
-              </Link>
+              </a>
+
+              {/* Keep internal Demo route */}
               <Link
                 to="/demo"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
@@ -196,10 +204,7 @@ export default function Landing() {
             'Follow-ups are inconsistent',
             'Cash flow becomes unpredictable',
           ].map((t) => (
-            <div
-              key={t}
-              className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm"
-            >
+            <div key={t} className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-teal-700 ring-1 ring-teal-500/20">
                   <CheckCircle2 className="h-4 w-4" />
@@ -271,7 +276,11 @@ export default function Landing() {
       {/* Pricing */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <SectionTitle kicker="Pricing" title="Simple plans that scale" desc="Start small, automate collections, and upgrade when you’re ready." />
+          <SectionTitle
+            kicker="Pricing"
+            title="Simple plans that scale"
+            desc="Start small, automate collections, and upgrade when you’re ready."
+          />
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {[
               {
@@ -321,8 +330,12 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to="/onboarding"
+
+                {/* GET STARTED -> Google Form */}
+                <a
+                  href={EARLY_ACCESS_FORM_URL}
+                  target="_blank"
+                  rel="noreferrer"
                   className={
                     p.featured
                       ? 'mt-6 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800'
@@ -330,7 +343,7 @@ export default function Landing() {
                   }
                 >
                   Get started
-                </Link>
+                </a>
               </div>
             ))}
           </div>
@@ -350,12 +363,17 @@ export default function Landing() {
               Connect your provider, pick a template, and activate autopilot in minutes.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/onboarding"
+              {/* START COLLECTING -> Google Form */}
+              <a
+                href={EARLY_ACCESS_FORM_URL}
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center justify-center rounded-xl bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-teal-400"
               >
                 Start Collecting Automatically
-              </Link>
+              </a>
+
+              {/* Keep internal route */}
               <Link
                 to="/dashboard"
                 className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15"
