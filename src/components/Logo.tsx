@@ -12,8 +12,13 @@ export function Logo({
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }) {
-  const px = size === 'sm' ? 28 : size === 'lg' ? 44 : 34;
-  const iconSrc = variant === 'navy' ? '/brand/payflow-icon-navy.png' : '/brand/payflow-icon-fullcolor.png';
+  const px = size === 'sm' ? 30 : size === 'lg' ? 48 : 38;
+
+  // Use your NEW Canva icon here
+  const iconSrc =
+    variant === 'navy'
+      ? '/brand/payflow-new-icon.png'
+      : '/brand/payflow-new-icon.png';
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
@@ -22,14 +27,18 @@ export function Logo({
         width={px}
         height={px}
         alt={`${brand.name} logo`}
-        className={cn('shrink-0', variant === 'navy' ? '' : '')}
+        className="shrink-0 object-contain"
       />
+
       <div className="leading-tight">
-        <div className="text-[15px] font-semibold tracking-[-0.01em] text-slate-900">
+        <div className="text-[18px] font-semibold tracking-[-0.02em] text-slate-900">
           <span className="text-slate-900">PayFlow</span>{' '}
           <span className="text-slate-700">Autopilot</span>
         </div>
-        <div className="text-[12px] text-slate-500">{brand.tagline}</div>
+
+        <div className="text-[12px] text-slate-500">
+          {brand.tagline}
+        </div>
       </div>
     </div>
   );
