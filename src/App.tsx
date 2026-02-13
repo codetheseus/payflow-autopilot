@@ -1,10 +1,14 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { TopNav } from './components/TopNav';
 import { Footer } from './components/Footer';
+
 import Landing from './pages/Landing';
 import Pricing from './pages/Pricing';
 import Demo from './pages/Demo';
 import Onboarding from './pages/Onboarding';
+import Login from './pages/Login';
+import Updates from './pages/Updates';
+
 import { DashboardShell } from './components/DashboardShell';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import Automations from './pages/dashboard/Automations';
@@ -12,21 +16,6 @@ import Customers from './pages/dashboard/Customers';
 import Links from './pages/dashboard/Links';
 import Reports from './pages/dashboard/Reports';
 import Settings from './pages/dashboard/Settings';
-
-// ✅ NEW PAGES (you will create these files)
-import Login from './pages/Login';
-import Updates from './pages/Updates';
-
-// ---- Simple auth gate (temporary) ----
-// Later we’ll replace this with Supabase session check.
-function isAuthed() {
-  return localStorage.getItem('payflow_authed') === 'true';
-}
-
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  if (!isAuthed()) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
 
 function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -38,19 +27,42 @@ function MarketingLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Simple dashboard protection
+function RequireAuth({ children }: { children: JSX.Element }) {
+  const isAuthed = localStorage.getItem('payflow_authed') === 'true';
+
+  if (!isAuthed) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Marketing */}
+        {/* Root now goes to Updates first */}
+        <Route path="/" element={<Navigate to="/updates" replace />} />
+
         <Route
-          path="/"
+          path="/updates"
           element={
             <MarketingLayout>
-              <Landing />
+              <Updates />
             </MarketingLayout>
           }
         />
+
+        <Route
+          path="/login"
+          element={
+            <MarketingLayout>
+              <Login />
+            </MarketingLayout>
+          }
+        />
+
         <Route
           path="/pricing"
           element={
@@ -59,6 +71,7 @@ export default function App() {
             </MarketingLayout>
           }
         />
+
         <Route
           path="/demo"
           element={
@@ -67,6 +80,7 @@ export default function App() {
             </MarketingLayout>
           }
         />
+
         <Route
           path="/onboarding"
           element={
@@ -76,27 +90,7 @@ export default function App() {
           }
         />
 
-        {/* Auth + Pre-dashboard */}
-        <Route
-          path="/login"
-          element={
-            <MarketingLayout>
-              <Login />
-            </MarketingLayout>
-          }
-        />
-        <Route
-          path="/updates"
-          element={
-            <MarketingLayout>
-              <RequireAuth>
-                <Updates />
-              </RequireAuth>
-            </MarketingLayout>
-          }
-        />
-
-        {/* Dashboard (protected) */}
+        {/* Protected Dashboard */}
         <Route
           path="/dashboard"
           element={
@@ -113,13 +107,7 @@ export default function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        {/* Helpful redirects */}
-        <Route
-          path="/app"
-          element={<Navigate to={isAuthed() ? '/updates' : '/login'} replace />}
-        />
-
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/updates" replace />} />
       </Routes>
     </BrowserRouter>
   );
