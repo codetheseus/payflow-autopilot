@@ -14,11 +14,11 @@ export function Logo({
 }) {
   const px = size === 'sm' ? 30 : size === 'lg' ? 48 : 38;
 
-  // Use your NEW Canva icon here
+  // 🔥 Add version query to force refresh
   const iconSrc =
     variant === 'navy'
-      ? '/brand/payflow-new-icon.png'
-      : '/brand/payflow-new-icon.png';
+      ? '/brand/payflow-new-icon.png?v=2'
+      : '/brand/payflow-new-icon.png?v=2';
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
