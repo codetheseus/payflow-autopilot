@@ -12,9 +12,11 @@ export default function Login() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // If you ever pass a "from" route, we’ll still support it.
+  // But default is the dashboard.
   const from = useMemo(() => {
     const state = location.state as any;
-    return state?.from?.pathname || '/updates';
+    return state?.from?.pathname || '/dashboard';
   }, [location.state]);
 
   function handleSubmit(e: React.FormEvent) {
@@ -37,6 +39,7 @@ export default function Login() {
       localStorage.removeItem('payflow_user_email');
     }
 
+    // ✅ Always land in the product (dashboard)
     navigate(from, { replace: true });
   }
 
@@ -123,8 +126,8 @@ export default function Login() {
 
           <div className="mt-6 text-center text-sm text-slate-600">
             New here?{' '}
-            <Link to="/" className="font-semibold text-slate-900 hover:underline">
-              Learn about PayFlow
+            <Link to="/updates" className="font-semibold text-slate-900 hover:underline">
+              View Updates & Overview
             </Link>
           </div>
         </div>
