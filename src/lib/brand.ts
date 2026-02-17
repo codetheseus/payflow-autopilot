@@ -1,6 +1,6 @@
 export const brand = {
   name: 'PayFlow Autopilot',
-  tagline: 'Revenue collection — on autopilot.',
+  tagline: 'Revenue collection, on autopilot.',
   message: 'Stop chasing payments. Get paid automatically.',
   colors: {
     navy: '#0B1F3B',

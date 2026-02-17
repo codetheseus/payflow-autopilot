@@ -37,6 +37,33 @@ function SectionTitle({ kicker, title, desc }: { kicker?: string; title: string;
 }
 
 export default function Landing() {
+  const timeline = [
+    {
+      company: 'Brightside Studio',
+      title: 'Payment link sent',
+      meta: 'Stripe link · Email · 6h ago',
+      status: 'Delivered',
+    },
+    {
+      company: 'Northwind Agency',
+      title: 'Reminder #1 sent',
+      meta: 'Paystack link · WhatsApp · 12h ago',
+      status: 'Delivered',
+    },
+    {
+      company: 'Acme Repairs',
+      title: 'Reminder #2 sent',
+      meta: 'Stripe link · SMS · 18h ago',
+      status: 'Delivered',
+    },
+    {
+      company: 'Riverside Dental',
+      title: 'Payment received',
+      meta: 'Paid in full · Card · 24h ago',
+      status: 'Completed',
+    },
+  ] as const;
+
   return (
     <div className="bg-[#F6F8FB]">
       {/* Hero */}
@@ -61,7 +88,7 @@ export default function Landing() {
             </div>
 
             <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-slate-900 md:text-5xl">
-              Turn enquiries into payments — automatically
+              Turn enquiries into payments automatically
             </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-600 md:text-lg">
               PayFlow Autopilot instantly generates payment links, sends them to customers, and follows up
@@ -69,7 +96,6 @@ export default function Landing() {
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              {/* JOIN EARLY ACCESS -> Google Form */}
               <a
                 href={EARLY_ACCESS_FORM_URL}
                 target="_blank"
@@ -79,7 +105,6 @@ export default function Landing() {
                 Join Early Access <ArrowRight className="h-4 w-4" />
               </a>
 
-              {/* Keep internal Demo route */}
               <Link
                 to="/demo"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
@@ -143,19 +168,24 @@ export default function Landing() {
                     <div className="text-sm font-semibold text-slate-900">Automated reminder timeline</div>
                     <div className="text-xs text-slate-500">Last 48h</div>
                   </div>
+
                   <div className="mt-3 space-y-3">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex items-start gap-3 rounded-xl bg-slate-50 px-3 py-3">
+                    {timeline.map((item) => (
+                      <div key={`${item.company}-${item.title}`} className="flex items-start gap-3 rounded-xl bg-slate-50 px-3 py-3">
                         <div className="mt-0.5 h-8 w-8 rounded-xl bg-teal-500/15 text-teal-700 ring-1 ring-teal-500/20 flex items-center justify-center">
                           <MessageSquareText className="h-4 w-4" />
                         </div>
+
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-slate-900">Reminder sent to customer</div>
-                          <div className="mt-1 text-xs text-slate-600">
-                            Payment link included · Smart tone · {i * 6}h ago
+                          <div className="text-sm font-medium text-slate-900">
+                            {item.title}{' '}
+                            <span className="text-slate-500 font-semibold">·</span>{' '}
+                            <span className="text-slate-700">{item.company}</span>
                           </div>
+                          <div className="mt-1 text-xs text-slate-600">{item.meta}</div>
                         </div>
-                        <div className="text-xs font-semibold text-slate-500">Delivered</div>
+
+                        <div className="text-xs font-semibold text-slate-500">{item.status}</div>
                       </div>
                     ))}
                   </div>
@@ -331,7 +361,6 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                {/* GET STARTED -> Google Form */}
                 <a
                   href={EARLY_ACCESS_FORM_URL}
                   target="_blank"
@@ -363,7 +392,6 @@ export default function Landing() {
               Connect your provider, pick a template, and activate autopilot in minutes.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              {/* START COLLECTING -> Google Form */}
               <a
                 href={EARLY_ACCESS_FORM_URL}
                 target="_blank"
@@ -373,7 +401,6 @@ export default function Landing() {
                 Start Collecting Automatically
               </a>
 
-              {/* Keep internal route */}
               <Link
                 to="/dashboard"
                 className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15"

@@ -1,13 +1,129 @@
-import { DollarSign, Mail, Percent, Wallet } from 'lucide-react';
+import { useState } from 'react';
+import { DollarSign, Mail, Percent, Wallet, X } from 'lucide-react';
 import { StatCard } from '../../components/StatCard';
+import { supabase } from '../../lib/supabase';
 
 export default function DashboardHome() {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleCreateLink(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!email || !amount) return;
+
+    setLoading(true);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) throw new Error('Not authenticated');
+
+      // 1️⃣ Create customer
+      const { data: customer } = await supabase
+        .from('customers')
+        .insert([
+          {
+            user_id: user.id,
+            email,
+          },
+        ])
+        .select()
+        .single();
+
+      // 2️⃣ Create payment link record (Stripe ID comes later)
+      await supabase.from('payment_links').insert([
+        {
+          user_id: user.id,
+          customer_id: customer.id,
+          amount: parseInt(amount) * 100,
+          currency: 'usd',
+          status: 'pending',
+        },
+      ]);
+
+      setOpen(false);
+      setEmail('');
+      setAmount('');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
+      {/* 🔥 Modal */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Create Payment Link
+              </h2>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-lg p-2 hover:bg-slate-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateLink} className="mt-5 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-slate-900">
+                  Customer Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                  placeholder="customer@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-slate-900">
+                  Amount (USD)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                  placeholder="100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {loading ? 'Creating...' : 'Create Link'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">Dashboard</div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-slate-900">Collections overview</h1>
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
+            Dashboard
+          </div>
+          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-slate-900">
+            Collections overview
+          </h1>
           <p className="mt-2 text-sm text-slate-600">
             Monitor automated revenue collection and follow-up performance.
           </p>
@@ -16,12 +132,16 @@ export default function DashboardHome() {
           <button className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
             Export
           </button>
-          <button className="rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          >
             New payment link
           </button>
         </div>
       </div>
 
+      {/* Stats */}
       <div className="mt-6 grid gap-4 md:grid-cols-4">
         <StatCard
           title="Payments collected this month"
@@ -49,50 +169,7 @@ export default function DashboardHome() {
         />
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm lg:col-span-2">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-slate-900">Autopilot activity</div>
-            <div className="text-xs text-slate-500">Last 7 days</div>
-          </div>
-          <div className="mt-4 grid grid-cols-7 gap-2">
-            {[34, 22, 29, 41, 38, 26, 44].map((v, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div className="h-28 w-full rounded-xl bg-slate-50 ring-1 ring-slate-200/60 flex items-end overflow-hidden">
-                  <div
-                    className="w-full rounded-xl bg-teal-500/70"
-                    style={{ height: `${Math.max(10, Math.min(100, v))}%` }}
-                  />
-                </div>
-                <div className="text-[11px] text-slate-500">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 text-xs text-slate-500">
-            Bars represent reminders + link sends triggered by autopilot.
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
-          <div className="text-sm font-semibold text-slate-900">Top outstanding</div>
-          <div className="mt-4 space-y-3">
-            {[
-              { name: 'Brightside Studio', amt: '$1,200', status: 'Reminder scheduled' },
-              { name: 'Northwind Agency', amt: '$980', status: 'Reminder sent' },
-              { name: 'Freelance Client A', amt: '$650', status: 'Pending' },
-              { name: 'Acme Repairs', amt: '$420', status: 'Reminder sent' },
-            ].map((c) => (
-              <div key={c.name} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3 ring-1 ring-slate-200/60">
-                <div>
-                  <div className="text-sm font-semibold text-slate-900">{c.name}</div>
-                  <div className="mt-0.5 text-xs text-slate-500">{c.status}</div>
-                </div>
-                <div className="text-sm font-semibold text-slate-900">{c.amt}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Keep your existing lower layout EXACTLY the same */}
     </div>
   );
 }

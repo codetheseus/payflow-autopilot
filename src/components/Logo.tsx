@@ -14,11 +14,7 @@ export function Logo({
 }) {
   const px = size === 'sm' ? 30 : size === 'lg' ? 48 : 38;
 
-  // 🔥 Add version query to force refresh
-  const iconSrc =
-    variant === 'navy'
-      ? '/brand/payflow-new-icon.png?v=2'
-      : '/brand/payflow-new-icon.png?v=2';
+  const iconSrc = '/brand/payflow-icon-fullcolor.png';
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
@@ -26,7 +22,7 @@ export function Logo({
         src={iconSrc}
         width={px}
         height={px}
-        alt={`${brand.name} logo`}
+        alt="PayFlow Autopilot logo"
         className="shrink-0 object-contain"
       />
 

@@ -1,3 +1,5 @@
+// src/App.tsx
+import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { TopNav } from './components/TopNav';
 import { Footer } from './components/Footer';
@@ -17,6 +19,9 @@ import Links from './pages/dashboard/Links';
 import Reports from './pages/dashboard/Reports';
 import Settings from './pages/dashboard/Settings';
 
+import RequireAuth from './components/RequireAuth';
+import RequireUpdatesSeen from './components/RequireUpdatesSeen';
+
 function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F6F8FB] text-slate-900">
@@ -27,42 +32,21 @@ function MarketingLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Simple dashboard protection
-function RequireAuth({ children }: { children: JSX.Element }) {
-  const isAuthed = localStorage.getItem('payflow_authed') === 'true';
-
-  if (!isAuthed) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-}
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Root now goes to Updates first */}
-        <Route path="/" element={<Navigate to="/updates" replace />} />
-
+        {/* ✅ Marketing homepage */}
         <Route
-          path="/updates"
+          path="/"
           element={
             <MarketingLayout>
-              <Updates />
+              <Landing />
             </MarketingLayout>
           }
         />
 
-        <Route
-          path="/login"
-          element={
-            <MarketingLayout>
-              <Login />
-            </MarketingLayout>
-          }
-        />
-
+        {/* ✅ Public marketing pages */}
         <Route
           path="/pricing"
           element={
@@ -71,7 +55,6 @@ export default function App() {
             </MarketingLayout>
           }
         />
-
         <Route
           path="/demo"
           element={
@@ -80,7 +63,6 @@ export default function App() {
             </MarketingLayout>
           }
         />
-
         <Route
           path="/onboarding"
           element={
@@ -90,12 +72,36 @@ export default function App() {
           }
         />
 
-        {/* Protected Dashboard */}
+        {/* ✅ Login (public) */}
+        <Route
+          path="/login"
+          element={
+            <MarketingLayout>
+              <Login />
+            </MarketingLayout>
+          }
+        />
+
+        {/* ✅ Updates (must be logged in) */}
+        <Route
+          path="/updates"
+          element={
+            <RequireAuth>
+              <MarketingLayout>
+                <Updates />
+              </MarketingLayout>
+            </RequireAuth>
+          }
+        />
+
+        {/* ✅ Dashboard (must be logged in + must see /updates first) */}
         <Route
           path="/dashboard"
           element={
             <RequireAuth>
-              <DashboardShell />
+              <RequireUpdatesSeen>
+                <DashboardShell />
+              </RequireUpdatesSeen>
             </RequireAuth>
           }
         >
@@ -107,7 +113,8 @@ export default function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/updates" replace />} />
+        {/* ✅ Unknown routes -> marketing homepage */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
