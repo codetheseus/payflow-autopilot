@@ -1,14 +1,10 @@
 import { brand } from '../lib/brand';
 import { cn } from '../lib/cn';
 
-type LogoVariant = 'full' | 'navy';
-
 export function Logo({
-  variant = 'full',
   size = 'md',
   className,
 }: {
-  variant?: LogoVariant;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }) {
@@ -22,7 +18,7 @@ export function Logo({
         src={iconSrc}
         width={px}
         height={px}
-        alt="PayFlow Autopilot logo"
+        alt={`${brand.name} logo`}
         className="shrink-0 object-contain"
       />
 
@@ -32,9 +28,7 @@ export function Logo({
           <span className="text-slate-700">Autopilot</span>
         </div>
 
-        <div className="text-[12px] text-slate-500">
-          {brand.tagline}
-        </div>
+        <div className="text-[12px] text-slate-500">{brand.tagline}</div>
       </div>
     </div>
   );
